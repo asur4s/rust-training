@@ -1,7 +1,7 @@
 use std::fs;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
-use std::thread::{self, Thread};
+use std::thread::{self};
 use std::time::Duration;
 use webserver::ThreadPool;
 
