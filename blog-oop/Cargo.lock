@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "blog-oop"
+name = "blog"
 version = "0.1.0"
