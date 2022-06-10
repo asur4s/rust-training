@@ -23,7 +23,7 @@ impl Config {
         // is_err 可以判断是否出错。如果存在该变量（忽略大小写），就为 False，如果不存在就为 True。
         // case sensitive：区分大小写
         let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
-        println!("{:?}", case_sensitive);
+        // println!("{:?}", case_sensitive);
 
         Ok(Config {
             query,

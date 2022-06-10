@@ -16,6 +16,7 @@ fn main() {
     println!("Searching for {}", config.query);
     println!("In file {}", config.filename);
 
+    // 类似前面的 unwarp_or_err，不需要保存返回值就推荐使用 if let Err
     if let Err(e) = minigrep::run(config) {
         eprintln!("Application error: {}", e);
         process::exit(1);
