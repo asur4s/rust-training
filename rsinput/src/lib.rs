@@ -10,4 +10,5 @@ mod tests {
         let char_vec: Vec<char> = s.chars().collect();
         println!("{:?}", char_vec);
     }
+    
 }
