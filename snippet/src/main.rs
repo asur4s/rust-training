@@ -1,5 +1,5 @@
-use snippet::hello;
+use snippet::*;
 
 fn main() {
-    hello();
+    test_deref();
 }
