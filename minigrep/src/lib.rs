@@ -11,14 +11,26 @@ pub struct Config {
 impl Config {
     // 函数通常使用 Result 作为返回类型，如果成功就返回 OK，如果失败就返回 Err。
     // Result 左边是 OK 的类型，右边是 Err 的类型。不能改变顺序
-    pub fn new(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 3 {
-            return Err("Not enough arguments");
-        }
+    pub fn new(mut args: std::env::Args) -> Result<Config, &'static str> {
+        // if args.len() < 3 {
+        //     return Err("Not enough arguments");
+        // }
 
         // 由于 args 是借用，所以必须使用 clone 获取所有权。
-        let query = args[1].clone();
-        let filename = args[2].clone();
+        // let query = args[1].clone();
+        // let filename = args[2].clone();
+
+        args.next();
+
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a query string"),
+        };
+
+        let filename = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a file name"),
+        };
 
         // is_err 可以判断是否出错。如果存在该变量（忽略大小写），就为 False，如果不存在就为 True。
         // case sensitive：区分大小写
@@ -57,15 +69,19 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 // 返回引用 需要标注生命周期。
 // 字符串的内容来源于 content，所以生命周期和 content 相同。
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut results = Vec::new();
+    // let mut results = Vec::new();
 
-    for line in contents.lines() {
-        // 判断字符串中是否包含查询内容
-        if line.contains(query) {
-            results.push(line);
-        }
-    }
-    results
+    // for line in contents.lines() {
+    //     // 判断字符串中是否包含查询内容
+    //     if line.contains(query) {
+    //         results.push(line);
+    //     }
+    // }
+    // results
+    contents
+        .lines()
+        .filter(|line| line.contains(query))
+        .collect()
 }
 
 pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
