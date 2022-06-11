@@ -220,6 +220,7 @@ dependencies = [
  "clap",
  "env_logger",
  "evdev",
+ "libc",
  "serde",
  "serde_yaml",
 ]
