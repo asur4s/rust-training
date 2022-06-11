@@ -23,9 +23,11 @@ impl ThreadPool {
     pub fn new(size: usize) -> ThreadPool {
         assert!(size > 0);
 
+        // 创建 channel，channel 可以在 CSP 模型中交换数据。
         let (sender, receiver) = mpsc::channel();
         let receiver = Arc::new(Mutex::new(receiver));
 
+        // 创建指定大小的数组。
         let mut workers = Vec::with_capacity(size);
         for id in 0..size {
             workers.push(Worker::new(id, Arc::clone(&receiver)))
@@ -38,6 +40,7 @@ impl ThreadPool {
     where
         F: FnOnce() + Send + 'static,
     {
+        // 在堆上申请空间，并将任务地址发送给 Woker。
         let job = Box::new(f);
         self.sender.send(Message::NewJob(job)).unwrap();
     }
@@ -45,12 +48,13 @@ impl ThreadPool {
 
 impl Drop for ThreadPool {
     fn drop(&mut self) {
+        // 通知线程池中所有的线程停止运行。
         println!("Sending terminate message to all workers.");
         for _ in &mut self.workers {
             self.sender.send(Message::Terminate).unwrap();
         }
         println!("Shutting down all workers.");
-
+        // 然后将还在运行的线程移出线程池，并使用 join 方法继续执行，执行后会自动退出。
         for worker in &mut self.workers {
             println!("Shutting down worker {}", worker.id);
 
@@ -69,6 +73,7 @@ struct Worker {
 impl Worker {
     fn new(id: usize, receiver: Arc<Mutex<mpsc::Receiver<Message>>>) -> Worker {
         let thread = thread::spawn(move || loop {
+            // 先上锁，然后读取消息。
             let message = receiver.lock().unwrap().recv().unwrap();
             match message {
                 Message::NewJob(job) => {
@@ -81,6 +86,7 @@ impl Worker {
                 }
             }
         });
+        // 创建新的 Woker，并将 Woker 返回。
         Worker {
             id,
             thread: Some(thread),
