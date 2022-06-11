@@ -85,15 +85,19 @@ pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
 }
 
 pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut results = Vec::new();
+    // let mut results = Vec::new();
 
-    for line in contents.lines() {
-        // 改变内容的大小写再查询。
-        if line.to_lowercase().contains(&query.clone().to_lowercase()) {
-            results.push(line);
-        }
-    }
-    results
+    // for line in contents.lines() {
+    //     // 改变内容的大小写再查询。
+    //     if line.to_lowercase().contains(&query.clone().to_lowercase()) {
+    //         results.push(line);
+    //     }
+    // }
+    // results
+    contents
+        .lines()
+        .filter(|line| line.to_lowercase().contains(&query.to_lowercase()[..]))
+        .collect()
 }
 
 #[cfg(test)]
