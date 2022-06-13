@@ -3,8 +3,7 @@ use serde::Deserialize;
 
 #[derive(Clone, Debug)]
 // #[serde(untagged)]
-pub enum KeyAction{
+pub enum KeyAction {
     Key(Key),
-    MultiPurposeKey()
+    MultiPurposeKey(),
 }
-

@@ -1,5 +1,5 @@
 use evdev::uinput::{VirtualDevice, VirtualDeviceBuilder};
-use evdev::{AttributeSet, Key, Device};
+use evdev::{AttributeSet, Device, Key};
 use std::error::Error;
 
 pub fn build_device(base_device: &Device) -> Result<VirtualDevice, Box<dyn Error>> {
