@@ -1,5 +1,5 @@
 use snippet::*;
 
 fn main() {
-    test_weak();
+    test_channel();
 }

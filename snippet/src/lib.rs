@@ -162,11 +162,82 @@ pub fn test_weak() {
     println!("b initial rc count = {:?}", Rc::strong_count(&b));
     println!("b next item = {:?}", b.tail());
 
-    if let Some(link) = a.tail(){
+    if let Some(link) = a.tail() {
         *link.borrow_mut() = Rc::clone(&b);
     }
     println!("b rc count after changing a = {:?}", Rc::strong_count(&b));
     println!("a rc count after changing a = {:?}", Rc::strong_count(&a));
     // 会导致溢出
     // println!("a next item = {:?}", a.tail());
+}
+
+pub fn test_thread() {
+    use std::thread;
+    use std::time::Duration;
+
+    let handle = thread::spawn(|| {
+        for i in 1..10 {
+            println!("hi number {} from the spawned thread!", i);
+            thread::sleep(Duration::from_millis(1));
+        }
+    });
+
+    for i in 1..5 {
+        println!("hi number {} from the main thread!", i);
+        thread::sleep(Duration::from_millis(1));
+    }
+
+    handle.join().unwrap();
+}
+
+pub fn test_thread_move() {
+    use std::thread;
+    use std::time::Duration;
+
+    let v = vec![1, 2, 3];
+    let handle = thread::spawn(move || {
+        println!("Here's a vector: {:?}", v);
+    });
+
+    handle.join().unwrap();
+}
+
+pub fn test_channel() {
+    use std::sync::mpsc;
+    use std::thread;
+    use std::time::Duration;
+
+    let (tx, rx) = mpsc::channel();
+    let tx1 = mpsc::Sender::clone(&tx);
+
+    thread::spawn(move || {
+        let vals = vec![
+            String::from("hi"),
+            String::from("from"),
+            String::from("the"),
+            String::from("thread"),
+        ];
+        for val in vals {
+            tx.send(val).unwrap();
+            thread::sleep(Duration::from_secs(1));
+        }
+    });
+
+    thread::spawn(move || {
+        let vals = vec![
+            String::from("more"),
+            String::from("message"),
+            String::from("from"),
+            String::from("you"),
+        ];
+        for val in vals {
+            tx1.send(val).unwrap();
+            thread::sleep(Duration::from_secs(1));
+        }
+    });
+
+    // try_recv 不会阻塞，但是 recv 会阻塞等待。
+    for received in rx {
+        println!("Got: {}", received);
+    }
 }
